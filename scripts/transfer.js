@@ -1,7 +1,5 @@
 const hre = require("hardhat");
-const fs = require("fs");
 const { encryptDataField, decryptNodeResponse } = require("@swisstronik/utils");
-
 const sendShieldedTransaction = async (signer, destination, data, value) => {
   const rpcLink = hre.network.config.url;
   const [encryptedData] = await encryptDataField(rpcLink, data);
@@ -14,21 +12,18 @@ const sendShieldedTransaction = async (signer, destination, data, value) => {
 };
 
 async function main() {
-  const contractAddress = fs.readFileSync("contract.txt", "utf8").trim();
+  const replace_contractAddress = "0xf6D9a701234Fc2E9AD74e8c0f54208653d0E54c4c";
   const [signer] = await hre.ethers.getSigners();
-  const contractFactory = await hre.ethers.getContractFactory("TestToken");
-  const contract = contractFactory.attach(contractAddress);
-  const functionName = "transfer";
-  const amount = 1 * 10 ** 18;
-  const functionArgs = ["0x16af037878a6cAce2Ea29d39A3757aC2F6F7aac1", amount.toString()];
-  const transaction = await sendShieldedTransaction(
-    signer,
-    contractAddress,
-    contract.interface.encodeFunctionData(functionName, functionArgs),
-    0
-  );
+
+  const replace_contractFactory = await hre.ethers.getContractFactory("TestToken");
+  const contract = replace_contractFactory.attach(replace_contractAddress);
+
+  const replace_functionName = "transfer";
+  const replace_functionArgs = ["0x16af037878a6cAce2Ea29d39A3757aC2F6F7aac1", "1"];
+  const transaction = await sendShieldedTransaction(signer, replace_contractAddress, contract.interface.encodeFunctionData(replace_functionName, replace_functionArgs), 0);
+
   await transaction.wait();
-  console.log("Transaction Response: ", `Transfer token has been success! Transaction hash: https://explorer-evm.testnet.swisstronik.com/tx/${transaction.hash}`);
+  console.log("Transfer Transaction Hash:", `https://explorer-evm.testnet.swisstronik.com/tx/${transaction.hash}`);
 }
 
 main().catch((error) => {
